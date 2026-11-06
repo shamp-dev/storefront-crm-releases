@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Storefront CRM — shop management for Windows</title>
+    <meta
+      name="description"
+      content="Point of sale, stock, customers, credit, invoices and reports in one Windows app. Works offline. Your data stays on your computer."
+    />
+    <meta property="og:title" content="Storefront CRM — shop management for Windows" />
+    <meta
+      property="og:description"
+      content="Point of sale, stock, customers, credit, invoices and reports in one Windows app. Works offline."
+    />
+    <meta property="og:image" content="assets/dashboard.webp" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f6f7fb;
+        --surface: #ffffff;
+        --border: #e4e7ee;
+        --text: #12151c;
+        --text-2: #474e5d;
+        --muted: #6b7280;
+        --accent: #4f46e5;
+        --accent-hover: #4338ca;
+        --accent-soft: #eef0ff;
+        --accent-text: #ffffff;
+        --warn-soft: #fff6e5;
+        --warn: #8a5300;
+        --shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 8px 24px rgb(16 24 40 / 0.08);
+        --shadow-lg: 0 24px 60px rgb(31 27 110 / 0.18);
+        --radius: 14px;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0d0f14;
+          --bg-soft: #141720;
+          --surface: #171a22;
+          --border: #262b36;
+          --text: #eceef3;
+          --text-2: #b9bfcb;
+          --muted: #8d95a3;
+          --accent: #8b93ff;
+          --accent-hover: #a7adff;
+          --accent-soft: #20234a;
+          --accent-text: #0d0f14;
+          --warn-soft: #2a2213;
+          --warn: #f4c46b;
+          --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+          --shadow-lg: 0 24px 60px rgb(0 0 0 / 0.55);
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0d0f14;
+        --bg-soft: #141720;
+        --surface: #171a22;
+        --border: #262b36;
+        --text: #eceef3;
+        --text-2: #b9bfcb;
+        --muted: #8d95a3;
+        --accent: #8b93ff;
+        --accent-hover: #a7adff;
+        --accent-soft: #20234a;
+        --accent-text: #0d0f14;
+        --warn-soft: #2a2213;
+        --warn: #f4c46b;
+        color-scheme: dark;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.6 Inter, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); }
+      img { max-width: 100%; display: block; }
+      h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
+      .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+      /* header */
+      .top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+      .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 64px; }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); text-decoration: none; }
+      .brand img { width: 32px; height: 32px; border-radius: 8px; }
+      .nav { display: flex; align-items: center; gap: 22px; }
+      .nav a.link { color: var(--text-2); text-decoration: none; font-size: 15px; }
+      .nav a.link:hover { color: var(--text); }
+      @media (max-width: 720px) { .nav a.link { display: none; } }
+
+      /* buttons */
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 650; text-decoration: none; border-radius: 10px; padding: 10px 18px; border: 1px solid transparent; cursor: pointer; transition: background 0.15s, transform 0.06s; }
+      .btn:active { transform: translateY(1px); }
+      .btn-primary { background: var(--accent); color: var(--accent-text); }
+      .btn-primary:hover { background: var(--accent-hover); }
+      .btn-ghost { border-color: var(--border); color: var(--text); background: var(--surface); }
+      .btn-ghost:hover { background: var(--bg-soft); }
+      .btn-lg { padding: 15px 26px; font-size: 18px; border-radius: 12px; }
+      .btn svg { flex: none; }
+
+      /* hero */
+      .hero { padding: 72px 0 40px; background: radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-soft), transparent 70%); }
+      .hero .wrap { display: grid; gap: 40px; justify-items: center; text-align: center; }
+      .eyebrow { display: inline-block; font-size: 14px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 5px 12px; border-radius: 999px; }
+      .hero h1 { font-size: clamp(34px, 6vw, 60px); max-width: 15ch; margin-top: 14px; }
+      .hero p.lead { font-size: clamp(17px, 2.2vw, 20px); color: var(--text-2); max-width: 46ch; margin: 18px auto 0; }
+      .cta { display: grid; justify-items: center; gap: 10px; }
+      .cta-meta { font-size: 14px; color: var(--muted); }
+      .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; color: var(--text-2); font-size: 15px; margin: 0; padding: 0; list-style: none; }
+      .badges li::before { content: "✓"; color: var(--accent); font-weight: 800; margin-right: 6px; }
+      .not-windows { display: none; font-size: 14px; color: var(--warn); background: var(--warn-soft); padding: 8px 14px; border-radius: 10px; }
+      .shot { border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-lg); overflow: hidden; background: var(--surface); }
+      .shot img { width: 100%; height: auto; }
+      .hero .shot { width: 100%; max-width: 1040px; }
+
+      /* sections */
+      section { padding: 72px 0; }
+      section.soft { background: var(--bg-soft); }
+      .section-head { text-align: center; max-width: 640px; margin: 0 auto 40px; }
+      .section-head h2 { font-size: clamp(28px, 4vw, 40px); }
+      .section-head p { color: var(--text-2); font-size: 18px; margin: 12px 0 0; }
+
+      .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+      .feature { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+      .feature .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: 14px; }
+      .feature h3 { font-size: 18px; }
+      .feature p { color: var(--text-2); margin: 8px 0 0; font-size: 15px; }
+
+      .tour { display: grid; gap: 56px; }
+      .tour-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: center; }
+      .tour-row:nth-child(even) .tour-text { order: 2; }
+      .tour-text h3 { font-size: 26px; }
+      .tour-text p { color: var(--text-2); font-size: 17px; margin: 12px 0 0; }
+      .tour-text ul { color: var(--text-2); padding-left: 20px; margin: 12px 0 0; }
+      @media (max-width: 820px) {
+        .tour-row { grid-template-columns: 1fr; gap: 18px; }
+        .tour-row:nth-child(even) .tour-text { order: 0; }
+      }
+
+      .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; counter-reset: step; }
+      .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; position: relative; }
+      .step::before { counter-increment: step; content: counter(step); position: absolute; top: -14px; left: 20px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: grid; place-items: center; font-weight: 750; font-size: 14px; }
+      .step h3 { font-size: 18px; margin-top: 6px; }
+      .step p { color: var(--text-2); margin: 8px 0 0; font-size: 15px; }
+
+      /* drawing of the SmartScreen prompt */
+      .smartscreen { margin: 28px auto 0; max-width: 760px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      @media (max-width: 680px) { .smartscreen { grid-template-columns: 1fr; } }
+      .ss { background: #0067b8; color: #fff; border-radius: 6px; padding: 20px 20px 16px; font-family: "Segoe UI", system-ui, sans-serif; min-height: 190px; display: flex; flex-direction: column; }
+      .ss b { font-size: 20px; font-weight: 600; }
+      .ss small { font-size: 13px; opacity: 0.92; margin-top: 8px; line-height: 1.45; }
+      .ss .more { color: #fff; text-decoration: underline; font-size: 13px; margin-top: 8px; outline: 2px solid #ffd54a; outline-offset: 3px; border-radius: 2px; align-self: flex-start; }
+      .ss .btns { margin-top: auto; display: flex; justify-content: flex-end; gap: 8px; padding-top: 14px; }
+      .ss .btns span { border: 1px solid #fff; padding: 4px 16px; font-size: 13px; }
+      .ss .btns .hl { outline: 2px solid #ffd54a; outline-offset: 3px; }
+      .ss-caption { text-align: center; color: var(--muted); font-size: 14px; margin-top: 10px; }
+
+      .faq { max-width: 760px; margin: 0 auto; display: grid; gap: 10px; }
+      .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+      .faq summary { font-weight: 650; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+      .faq summary::after { content: "+"; color: var(--muted); font-weight: 400; font-size: 20px; line-height: 1; }
+      .faq details[open] summary::after { content: "–"; }
+      .faq p { color: var(--text-2); margin: 10px 0 0; }
+
+      .final { text-align: center; }
+      .final h2 { font-size: clamp(28px, 4vw, 40px); }
+      .final .cta { margin-top: 26px; }
+      .reqs { color: var(--muted); font-size: 14px; margin-top: 18px; }
+
+      footer { border-top: 1px solid var(--border); padding: 28px 0; color: var(--muted); font-size: 14px; }
+      footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+
+      /* after-download panel */
+      .thanks { position: fixed; inset: auto 16px 16px auto; width: min(400px, calc(100% - 32px)); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px 22px; z-index: 20; display: none; }
+      .thanks.show { display: block; animation: rise 0.2s ease-out; }
+      .thanks h3 { font-size: 18px; padding-right: 28px; }
+      .thanks ol { margin: 10px 0 0; padding-left: 20px; color: var(--text-2); font-size: 15px; }
+      .thanks ol li { margin: 4px 0; }
+      .thanks .close { position: absolute; top: 12px; right: 12px; border: 0; background: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; padding: 4px; }
+      .thanks .retry { font-size: 14px; margin: 12px 0 0; color: var(--muted); }
+      @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .thanks.show { animation: none; } }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="#"><img src="assets/icon-192.png" alt="" /> Storefront CRM</a>
+        <nav class="nav">
+          <a class="link" href="#features">Features</a>
+          <a class="link" href="#install">How to install</a>
+          <a class="link" href="#faq">Questions</a>
+          <a class="btn btn-primary js-download" href="#">Download</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="wrap">
+          <div>
+            <span class="eyebrow">For shops, marts &amp; small stores</span>
+            <h1>Run your whole shop from one app</h1>
+            <p class="lead">
+              Billing, stock, customers, credit, invoices and profit reports in one Windows program. It works offline and keeps your
+              data on your own computer.
+            </p>
+          </div>
+          <div class="cta">
+            <a class="btn btn-primary btn-lg js-download" href="#">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M3 5.5 10.5 4.4v7.1H3V5.5Zm0 13L10.5 19.6v-7H3v5.9Zm8.4 1.2L21 21v-8.4h-9.6v7.1Zm0-15.4v7.2H21V3l-9.6 1.3Z" />
+              </svg>
+              Download for Windows
+            </a>
+            <span class="cta-meta js-meta">Windows 10 &amp; 11 · 64-bit</span>
+            <span class="not-windows js-not-windows">You're on a phone or Mac. Open this page on your shop's Windows computer to install.</span>
+          </div>
+          <ul class="badges">
+            <li>Works without internet</li>
+            <li>Barcode scanners &amp; receipt printers</li>
+            <li>Several tills, one shop</li>
+            <li>Daily automatic backups</li>
+          </ul>
+          <div class="shot"><img src="assets/dashboard.webp" width="1440" height="900" alt="Storefront CRM dashboard showing today's sales, profit and a revenue chart" /></div>
+        </div>
+      </section>
+
+      <section id="features">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Everything a shop needs</h2>
+            <p>Replace the register book, the stock notebook and the calculator with one simple app.</p>
+          </div>
+          <div class="features">
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M7 5v14M11 5v14M14 5v14M18 5v14M21 5v14" /></svg></div>
+              <h3>Fast billing</h3>
+              <p>Scan barcodes or tap products, give discounts, split payments, show change due, and print the receipt.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8ZM3 8l9 5 9-5M12 13v8" /></svg></div>
+              <h3>Stock control</h3>
+              <p>Live stock levels, low-stock alerts, stock counts by scanning, and purchase orders to suppliers.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></svg></div>
+              <h3>Customers &amp; credit</h3>
+              <p>Sell on credit and see who owes what. Full purchase history for every customer.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6ZM14 2v6h6M16 13H8M16 17H8" /></svg></div>
+              <h3>Invoices</h3>
+              <p>Professional invoices for business customers. Record part payments and see what's overdue.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6" /></svg></div>
+              <h3>Profit you can see</h3>
+              <p>Daily sales, profit after costs and expenses, best-selling products, and what's not selling.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8ZM7 7h.01" /></svg></div>
+              <h3>Barcode labels</h3>
+              <p>Create barcodes for loose items and print price labels on a label printer or sticker sheets.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v10H3zM7 19h10M12 15v4" /></svg></div>
+              <h3>More than one till</h3>
+              <p>Connect extra computers over the shop's network. Sales and stock stay in sync on every till.</p>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg></div>
+              <h3>Safe &amp; private</h3>
+              <p>Staff logins with roles, automatic daily backups, and restore in a click. Your data never leaves the shop.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="soft">
+        <div class="wrap tour">
+          <div class="tour-row">
+            <div class="tour-text">
+              <h3>Billing that keeps up with the queue</h3>
+              <p>Scan with any USB barcode scanner, or tap products on screen. Stickers from a weighing scale can ring up the right weight too.</p>
+              <ul>
+                <li>Cash, card and mobile payments, or split them</li>
+                <li>Receipts print straight to your receipt printer</li>
+                <li>Returns and refunds put stock back</li>
+              </ul>
+            </div>
+            <div class="shot"><img src="assets/pos.webp" width="1440" height="900" loading="lazy" alt="Point of sale screen with product tiles and a cart" /></div>
+          </div>
+          <div class="tour-row">
+            <div class="tour-text">
+              <h3>Know your real profit</h3>
+              <p>See takings, cost of goods, expenses and net profit for any period, plus what sells and what sits on the shelf.</p>
+            </div>
+            <div class="shot"><img src="assets/reports.webp" width="1440" height="900" loading="lazy" alt="Reports screen with revenue, profit and a daily sales chart" /></div>
+          </div>
+          <div class="tour-row">
+            <div class="tour-text">
+              <h3>Stock counts in minutes</h3>
+              <p>Walk the shelves scanning items with a scanner or your phone camera. Differences are shown before anything changes.</p>
+            </div>
+            <div class="shot"><img src="assets/stock-count.webp" width="1440" height="720" loading="lazy" alt="Stock count screen comparing counted and expected quantities" /></div>
+          </div>
+          <div class="tour-row">
+            <div class="tour-text">
+              <h3>Invoices and price labels</h3>
+              <p>Print invoices for business customers and barcode price labels for anything without one.</p>
+            </div>
+            <div class="shot"><img src="assets/labels.webp" width="1440" height="780" loading="lazy" alt="Barcode label printing screen with label previews" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="install">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Install in two minutes</h2>
+            <p>No account, no internet connection needed after download.</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <h3>Download</h3>
+              <p>Click <strong>Download for Windows</strong> and save the file. It's about 120 MB.</p>
+            </div>
+            <div class="step">
+              <h3>Run the installer</h3>
+              <p>Open <strong>Storefront-CRM-Setup.exe</strong> from your Downloads folder and follow the steps.</p>
+            </div>
+            <div class="step">
+              <h3>Set up your shop</h3>
+              <p>Enter your shop name, currency and a password. Then add products, or just start scanning them in.</p>
+            </div>
+          </div>
+
+          <div class="section-head" style="margin-top: 56px; margin-bottom: 0">
+            <h2 style="font-size: 24px">If Windows shows a blue warning</h2>
+            <p style="font-size: 16px">
+              New programs from small developers often show this the first time. Click <strong>More info</strong>, then
+              <strong>Run anyway</strong>. You only need to do this once.
+            </p>
+          </div>
+          <div class="smartscreen" aria-hidden="true">
+            <div class="ss">
+              <b>Windows protected your PC</b>
+              <small>Microsoft Defender SmartScreen prevented an unrecognized app from starting. Running this app might put your PC at risk.</small>
+              <span class="more">More info</span>
+              <div class="btns"><span>Don't run</span></div>
+            </div>
+            <div class="ss">
+              <b>Windows protected your PC</b>
+              <small>App: Storefront-CRM-Setup.exe<br />Publisher: Unknown publisher</small>
+              <div class="btns"><span class="hl">Run anyway</span><span>Don't run</span></div>
+            </div>
+          </div>
+          <p class="ss-caption">Step 1: click "More info". Step 2: click "Run anyway".</p>
+        </div>
+      </section>
+
+      <section id="faq" class="soft">
+        <div class="wrap">
+          <div class="section-head"><h2>Questions</h2></div>
+          <div class="faq">
+            <details>
+              <summary>Do I need internet?</summary>
+              <p>Only to download the app. Billing, stock and reports all work offline. Your shop keeps running when the internet is down.</p>
+            </details>
+            <details>
+              <summary>Where is my data kept?</summary>
+              <p>On your own computer, not on the internet. The app makes a backup every day, and you can copy backups to a USB drive or a OneDrive or Google Drive folder.</p>
+            </details>
+            <details>
+              <summary>Can I use it on more than one computer?</summary>
+              <p>Yes. Install it on each computer. Make one the main computer in <em>Settings → This computer</em>, then connect the others to it. They all share the same sales, stock and customers.</p>
+            </details>
+            <details>
+              <summary>Which barcode scanners and printers work?</summary>
+              <p>Any USB or Bluetooth barcode scanner works without setup. You can also use a phone or tablet camera. Any printer installed in Windows works, including 80 mm thermal receipt printers and Zebra, Dymo or Brother label printers.</p>
+            </details>
+            <details>
+              <summary>Can my staff use it without seeing profits?</summary>
+              <p>Yes. Give staff a <em>cashier</em> login: they can bill and look up products, but they can't see cost prices, reports or settings.</p>
+            </details>
+            <details>
+              <summary>Why does Windows show a warning?</summary>
+              <p>Windows warns about new programs that aren't signed with an expensive certificate. Click <strong>More info → Run anyway</strong>. The app is the same either way.</p>
+            </details>
+            <details>
+              <summary>How do I update?</summary>
+              <p>Download the latest version from this page and run it. It installs over the old one, and your data is kept.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="final">
+        <div class="wrap">
+          <h2>Ready to try it in your shop?</h2>
+          <div class="cta">
+            <a class="btn btn-primary btn-lg js-download" href="#">Download for Windows</a>
+            <span class="cta-meta js-meta">Windows 10 &amp; 11 · 64-bit</span>
+          </div>
+          <p class="reqs">Needs Windows 10 or 11 (64-bit), 4 GB RAM and 500 MB of free disk space.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>© <span class="js-year">2026</span> Storefront CRM</span>
+        <a class="js-all-versions" href="#">All versions</a>
+      </div>
+    </footer>
+
+    <aside class="thanks js-thanks" role="status" aria-live="polite">
+      <button class="close js-close" aria-label="Close">×</button>
+      <h3>Your download is starting…</h3>
+      <ol>
+        <li>Open <strong>Storefront-CRM-Setup.exe</strong> from your Downloads folder.</li>
+        <li>If Windows warns you, click <strong>More info → Run anyway</strong>.</li>
+        <li>Follow the installer. The app opens when it's finished.</li>
+      </ol>
+      <p class="retry">Didn't start? <a class="js-direct" href="#">Click here to download</a>.</p>
+    </aside>
+
+    <script>
+      // ---- Settings: change these to match your GitHub releases repository ----
+      const CONFIG = {
+        repo: "shamp-dev/storefront-crm-releases", // public repo whose Releases hold the installer
+        asset: "Storefront-CRM-Setup.exe" // file name of the installer in each release
+      }
+
+      const releasesUrl = `https://github.com/${CONFIG.repo}/releases`
+      let downloadUrl = `${releasesUrl}/latest/download/${CONFIG.asset}`
+
+      const $$ = (s) => document.querySelectorAll(s)
+      const setLinks = () => {
+        $$(".js-download, .js-direct").forEach((a) => (a.href = downloadUrl))
+        $$(".js-all-versions").forEach((a) => (a.href = releasesUrl))
+      }
+      setLinks()
+      $$(".js-year").forEach((e) => (e.textContent = new Date().getFullYear()))
+
+      // Show the current version and size from GitHub (falls back to the links above).
+      fetch(`https://api.github.com/repos/${CONFIG.repo}/releases/latest`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((rel) => {
+          const asset = rel.assets.find((a) => a.name === CONFIG.asset) || rel.assets.find((a) => /\.exe$/i.test(a.name))
+          if (!asset) return
+          downloadUrl = asset.browser_download_url
+          setLinks()
+          const mb = Math.round(asset.size / 1048576)
+          const date = new Date(rel.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+          $$(".js-meta").forEach((e) => (e.textContent = `Version ${rel.tag_name.replace(/^v/, "")} · ${mb} MB · ${date} · Windows 10 & 11`))
+        })
+        .catch(() => {})
+
+      // Visitors on phones or Macs can't run the installer: tell them where to open the page.
+      const isWindows = /Windows/i.test(navigator.userAgent) && !/Windows Phone/i.test(navigator.userAgent)
+      if (!isWindows) $$(".js-not-windows").forEach((e) => (e.style.display = "block"))
+
+      // After clicking download, show what to do next.
+      const thanks = document.querySelector(".js-thanks")
+      $$(".js-download").forEach((a) => a.addEventListener("click", () => thanks.classList.add("show")))
+      document.querySelector(".js-close").addEventListener("click", () => thanks.classList.remove("show"))
+    </script>
+  </body>
+</html>
